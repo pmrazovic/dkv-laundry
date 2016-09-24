@@ -18,16 +18,16 @@
       <thead>
         <tr>
           <th></th>
-          <% @time_slots[@time_slots.keys.first].each do |slot| %>
+          <% @time_slots[@time_slots.keys.first].each do |time_slot| %>
             <th>
-              <span class="text-muted"><%= "#{slot.strftime("%H:%M")} - #{(slot+2.hours).strftime("%H:%M")}" %></span>
+              <span class="text-muted"><%= "#{time_slot[:start].localtime.strftime("%H:%M")} - #{time_slot[:finish].localtime.strftime("%H:%M")}" %></span>
             </th>
           <% end %> 
         </tr>
       </thead>
 
       <tbody>
-        <% @time_slots.each do |day,slots| %>
+        <% @time_slots.each do |day,time_slots| %>
           <tr>
             <th>
               <span class="text-muted">
@@ -35,18 +35,21 @@
                 <%= day %>  
               </span>
             </th>
-            <% slots.each do |slot| %>
-              <td class="<%= @booked_slots[slot].nil? && slot >= @current_time_slot ? "" : "active" %> text-center" style="vertical-align: middle">
-                <% if slot < @current_time_slot %>
-                <% elsif @booked_slots[slot].blank? %>
+            <% time_slots.each do |time_slot| %>
+              <td class="<%= @booked_slots[time_slot[:start]].nil? && time_slot[:finish] > Time.now + 5.minutes ? "" : "active" %> text-center" style="vertical-align: middle">
+
+                <% if time_slot[:finish] <= Time.now + 5.minutes %>
+                  <span class="text-muted" style="opacity: 0.2"><b><i class="fa fa-ban fa-2x" aria-hidden="true"></i></b></span>
+                <% elsif @booked_slots[time_slot[:start]].blank? %>
                   <% if current_user.slots.blank? %>
-                    <%= link_to '<i class="fa fa-lock fa-lg" aria-hidden="true"></i>'.html_safe, slots_path(:start => slot, :finish => slot + 2.hours), :class => "btn btn-default", :method => :post %>
+                    <%= link_to '<i class="fa fa-lock fa-lg" aria-hidden="true"></i>'.html_safe, slots_path(:start => time_slot[:start], :finish => time_slot[:finish]), :class => "btn btn-default", :method => :post %>
                   <% end %>
-                <% elsif @booked_slots[slot].user == current_user %>
-                  <%= link_to '<i class="fa fa-unlock-alt fa-lg" aria-hidden="true"></i>'.html_safe, slot_path(@booked_slots[slot]), :class => "btn btn-default", :method => :delete %>
+                <% elsif @booked_slots[time_slot[:start]].user == current_user %>
+                  <%= link_to '<i class="fa fa-unlock-alt fa-lg" aria-hidden="true"></i>'.html_safe, slot_path(@booked_slots[time_slot[:start]]), :class => "btn btn-default", :method => :delete %>
                 <% else %>
-                  <span class="text-muted"><h5><%= @booked_slots[slot].room_number %></h5></span>
+                  <span class="text-muted"><h5><%= @booked_slots[time_slot[:start]].room_number %></h5></span>
                 <% end %>
+
               </td>
             <% end %>
           </tr>

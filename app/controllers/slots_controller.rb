@@ -20,38 +20,41 @@ class SlotsController < ApplicationController
 
     @time_slots = ActiveSupport::OrderedHash.new
     days_from_this_week.each do |current_date|
-      @time_slots[current_date] = []
-      current_time_slot = Time.new(current_date.year, current_date.month, current_date.day, 0, 0, 0)
-      while current_time_slot.to_date == current_date
-        @time_slots[current_date] << current_time_slot
-        current_time_slot += 2.hours
-      end
+      @time_slots[current_date] = [ { :start => Time.new(current_date.year, current_date.month, current_date.day, 0, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 2, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 2, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 4, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 4, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 6, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 6, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 8, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 8, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 10, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 10, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 12, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 12, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 14, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 14, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 16, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 16, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 18, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 18, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 20, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 20, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day, 22, 0, 0) },
+                                    { :start => Time.new(current_date.year, current_date.month, current_date.day, 22, 0, 0),
+                                      :finish => Time.new(current_date.year, current_date.month, current_date.day+1, 0, 0, 0) },
+                                  ]
     end  
 
     slots = Slot.where("start >= ? AND start <= ?", 
                         Time.new(beginning_of_week.year, beginning_of_week.month, beginning_of_week.day, 0, 0, 0),
                         Time.new(end_of_week.year, end_of_week.month, end_of_week.day, 23, 59, 59))
+    
     @booked_slots = Hash.new
     slots.each do |slot|
       @booked_slots[slot.start] = slot
     end
-
-    @current_time_slot = Time.at((Time.now.to_f / 2.hours).ceil * 2.hours - 2.hours)
-
-  end
-
-  # GET /slots/1
-  # GET /slots/1.json
-  def show
-  end
-
-  # GET /slots/new
-  def new
-    @slot = Slot.new
-  end
-
-  # GET /slots/1/edit
-  def edit
   end
 
   # POST /slots
@@ -62,9 +65,9 @@ class SlotsController < ApplicationController
       errors << "You cannot book more than one slot at the time!"
     elsif Slot.where(:room_number => current_user.room_number).length > 0
       errors << "There already exists a slot booked for your room number!"
-    elsif Slot.where(:start => params["start"].to_time).length > 0
+    elsif Slot.where(:start => params["start"].to_time, :finish => params["finish"].to_time).length > 0
       errors << "Another user already booked this slot!"
-    elsif params["start"].to_time < Time.at((Time.now.to_f / 2.hours).ceil * 2.hours - 2.hours)
+    elsif params["finish"].to_time < Time.now
       errors << "You cannot book expired slots!"
     end
 
@@ -74,20 +77,6 @@ class SlotsController < ApplicationController
     else
       flash[:error] = errors.join(" ")
       redirect_to :back
-    end
-  end
-
-  # PATCH/PUT /slots/1
-  # PATCH/PUT /slots/1.json
-  def update
-    respond_to do |format|
-      if @slot.update(slot_params)
-        format.html { redirect_to @slot, notice: 'Slot was successfully updated.' }
-        format.json { render :show, status: :ok, location: @slot }
-      else
-        format.html { render :edit }
-        format.json { render json: @slot.errors, status: :unprocessable_entity }
-      end
     end
   end
 
