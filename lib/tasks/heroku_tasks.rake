@@ -11,7 +11,7 @@ namespace :heroku_tasks do
 
   desc "Removes expired slots"
   task :remove_expired_slots => :environment do
-  	Slot.where("finish < ?", Time.now).delete_all
+  	Slot.where("finish < ?", Time.now+2.minutes).delete_all
 	end
 
 
