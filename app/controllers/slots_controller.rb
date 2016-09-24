@@ -69,7 +69,7 @@ class SlotsController < ApplicationController
     end
 
     if errors.blank?
-      @slot = Slot.create(:user_id => current_user.id, :room_number => current_user.room_number, :start => params["start"].to_time)
+      @slot = Slot.create(:user_id => current_user.id, :room_number => current_user.room_number, :start => params["start"].to_time, :finish => params["finish"].to_time)
       redirect_to :back
     else
       flash[:error] = errors.join(" ")

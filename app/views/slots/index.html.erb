@@ -40,7 +40,7 @@
                 <% if slot < @current_time_slot %>
                 <% elsif @booked_slots[slot].blank? %>
                   <% if current_user.slots.blank? %>
-                    <%= link_to '<i class="fa fa-lock fa-lg" aria-hidden="true"></i>'.html_safe, slots_path(:start => slot), :class => "btn btn-default", :method => :post %>
+                    <%= link_to '<i class="fa fa-lock fa-lg" aria-hidden="true"></i>'.html_safe, slots_path(:start => slot, :finish => slot + 2.hours), :class => "btn btn-default", :method => :post %>
                   <% end %>
                 <% elsif @booked_slots[slot].user == current_user %>
                   <%= link_to '<i class="fa fa-unlock-alt fa-lg" aria-hidden="true"></i>'.html_safe, slot_path(@booked_slots[slot]), :class => "btn btn-default", :method => :delete %>
@@ -61,8 +61,8 @@
     <div class="col-lg-12">
       <div class="alert alert-info">
         <h4>Booked slot</h4>
-        <p><%= current_user.slots.first.start.strftime("%B %d, %Y (%A)") %></p>
-        <p><%= "#{current_user.slots.first.start.strftime("%H:%M")} - #{(current_user.slots.first.start+2.hours).strftime("%H:%M")}" %></p>
+        <p><%= current_user.slots.first.start.localtime.strftime("%B %d, %Y (%A)") %></p>
+        <p><%= "#{current_user.slots.first.start.localtime.strftime("%H:%M")} - #{current_user.slots.first.finish.localtime.strftime("%H:%M")}" %></p>
       </div>
     </div>
   </div>
