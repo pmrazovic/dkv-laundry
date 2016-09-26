@@ -36,9 +36,9 @@
               </span>
             </th>
             <% time_slots.each do |time_slot| %>
-              <td class="<%= @booked_slots[time_slot[:start]].nil? && time_slot[:finish] > Time.now - 2.minutes ? "" : "active" %> text-center" style="vertical-align: middle">
+              <td class="<%= @booked_slots[time_slot[:start]].nil? && time_slot[:finish] > Time.now - 2.minutes && time_slot[:start] >= Time.new(2016, 10, 1, 0, 0, 0) ? "" : "active" %> text-center" style="vertical-align: middle">
 
-                <% if time_slot[:finish] <= Time.now - 2.minutes %>
+                <% if time_slot[:finish] <= Time.now - 2.minutes || time_slot[:start] < Time.new(2016, 10, 1, 0, 0, 0) %>
                   <span class="text-muted" style="opacity: 0.2"><b><i class="fa fa-ban fa-2x" aria-hidden="true"></i></b></span>
                 <% elsif @booked_slots[time_slot[:start]].blank? %>
                   <% if current_user.slots.blank? %>
