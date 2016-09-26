@@ -1,13 +1,13 @@
 <div class="row" style="padding-bottom: 20px">
-  <div class="col-lg-3">
-    <%= link_to "Previous week", slots_path(:week => @week-1), :class => "btn btn-default col-lg-12", :disabled => @week == 0 %>
+  <div class="col-lg-2">
+    <%= link_to 'Previous week'.html_safe, slots_path(:week => @week-1), :class => "btn btn-default col-lg-12", :disabled => @week == 0 %>
   </div>
-  <div class="col-lg-6 text-center">
+  <div class="col-lg-8 text-center">
     <h4>
       <%= @time_slots.keys.first.strftime("%B %d, %Y") %> - <%= @time_slots.keys.last.strftime("%B %d, %Y") %>
     </h4>
   </div>
-  <div class="col-lg-3">
+  <div class="col-lg-2">
     <%= link_to "Next week", slots_path(:week => @week+1), :class => "btn btn-default col-lg-12", :disabled => @week == 4 %>
   </div>
 </div>
@@ -66,6 +66,7 @@
         <h4>Booked slot</h4>
         <p><%= current_user.slots.first.start.localtime.strftime("%B %d, %Y (%A)") %></p>
         <p><%= "#{current_user.slots.first.start.localtime.strftime("%H:%M")} - #{current_user.slots.first.finish.localtime.strftime("%H:%M")}" %></p>
+        <p>Door code: <b>1291</b></p>
       </div>
     </div>
   </div>
