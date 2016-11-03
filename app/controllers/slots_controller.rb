@@ -20,6 +20,7 @@ class SlotsController < ApplicationController
 
     @time_slots = ActiveSupport::OrderedHash.new
     days_from_this_week.each do |current_date|
+      next_day = current_date + 1.day
       @time_slots[current_date] = [ { :start => Time.new(current_date.year, current_date.month, current_date.day, 0, 0, 0),
                                       :finish => Time.new(current_date.year, current_date.month, current_date.day, 4, 0, 0) },
                                     { :start => Time.new(current_date.year, current_date.month, current_date.day, 4, 0, 0),
@@ -43,7 +44,7 @@ class SlotsController < ApplicationController
                                     { :start => Time.new(current_date.year, current_date.month, current_date.day, 20, 30, 0),
                                       :finish => Time.new(current_date.year, current_date.month, current_date.day, 22, 0, 0) },
                                     { :start => Time.new(current_date.year, current_date.month, current_date.day, 22, 0, 0),
-                                      :finish => Time.new(current_date.year, current_date.month, current_date.day+1, 0, 0, 0) },
+                                      :finish => Time.new(next_day.year, next_day.month, next_day.day, 0, 0, 0) }
                                   ]
     end  
 
